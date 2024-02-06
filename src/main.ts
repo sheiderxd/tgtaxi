@@ -10,7 +10,6 @@ async function bootstrap() {
   .setTitle('tgtaxi')
   .setDescription('The tgtaxi API description')
   .setVersion('1.0')
-  .addTag('cats')
   .build();
 
   const document = SwaggerModule.createDocument(app, config);
