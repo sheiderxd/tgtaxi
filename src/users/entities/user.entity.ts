@@ -1,4 +1,4 @@
-import { Column, Entity, PrimaryGeneratedColumn } from "typeorm";
+import { Column, Entity, PrimaryGeneratedColumn, VirtualColumn } from "typeorm";
 const crypto = require("crypto");
 
 @Entity()
@@ -10,15 +10,10 @@ export class User {
   name: string;
 
   @Column({ type: "varchar" })
-  username: string;
-
-  @Column({ type: "varchar" })
   email: string;
 
-  @Column({ type: "varchar" })
-  resetPasswordToken: {
-    type: string;
-  };
+  @Column({ type: "varchar", nullable: true })
+  resetPasswordToken: string;
 
   @Column({ type: "varchar" })
   encryptionHash: string;
@@ -26,7 +21,8 @@ export class User {
   @Column({ type: "varchar" })
   encryptedPassword: string;
 
-  setPassword(password: string) {
+  @VirtualColumn({ query: () => "" })
+  set password(password: string) {
     const encryptionHash = crypto.randomBytes(128).toString("base64");
     this.encryptionHash = encryptionHash;
     this.encryptedPassword = encrypt(password, encryptionHash);

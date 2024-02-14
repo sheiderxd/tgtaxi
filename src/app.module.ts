@@ -4,6 +4,7 @@ import { AppService } from "./app.service";
 import { UsersModule } from "./users/users.module";
 import { TypeOrmModule } from "@nestjs/typeorm";
 import { ConfigModule, ConfigService } from "@nestjs/config";
+import { AuthModule } from './auth/auth.module';
 
 @Module({
   imports: [
@@ -17,13 +18,14 @@ import { ConfigModule, ConfigService } from "@nestjs/config";
         password: configService.getOrThrow("DB_PASSWORD"),
         autoLoadEntities: true,
         synchronize: false,
+        logging: true,
       }),
       inject: [ConfigService],
     }),
     ConfigModule.forRoot({ isGlobal: true }),
     UsersModule,
+    AuthModule,
   ],
-  controllers: [AppController],
   providers: [AppService],
 })
 export class AppModule {}
