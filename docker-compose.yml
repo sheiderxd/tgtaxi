@@ -1,10 +1,13 @@
-version: '3.8'
-services:  
-  api:    
-    build: .    
-    container_name: tgtaxi_backend    
-    ports:      
-      - '4000:4000'    
-    volumes:     
-      - ./     
+version: "3.8"
+services:
+  api:
+    build: .
+    container_name: tgtaxi_backend
+    ports:
+      - "4000:4000"
+    volumes:
+      - ./
       - ./node_modules
+
+  postgres:
+    container_name: postgres
