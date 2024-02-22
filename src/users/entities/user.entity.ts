@@ -1,4 +1,5 @@
 import { Column, Entity, PrimaryGeneratedColumn, VirtualColumn } from "typeorm";
+import { Role } from "../constants/role";
 const crypto = require("crypto");
 
 @Entity()
@@ -11,6 +12,13 @@ export class User {
 
   @Column({ type: "varchar" })
   email: string;
+
+  @Column({
+    type: "varchar",
+    enum: Role,
+    default: "123123",
+  })
+  role: Role;
 
   @Column({ type: "varchar", nullable: true })
   resetPasswordToken: string;

@@ -6,6 +6,10 @@ import {
 import { UsersService } from "src/users/users.service";
 import { JwtService } from "@nestjs/jwt";
 import { jwtConstants } from "./constants";
+import { CreateUserDto } from "src/users/dto/create-user.dto";
+import { SignUpDto } from "./dto/sign-up.dto";
+import { Role } from "src/users/constants/role";
+import { JwtPayload } from "./interfaces/jwt-payload.interface";
 
 @Injectable()
 export class AuthService {
@@ -14,10 +18,9 @@ export class AuthService {
     private jwtService: JwtService
   ) {}
 
-  private async generateAccessToken(userId: string, email: string) {
-    const payload = { userId, email };
+  private async generateAccessToken(payload: JwtPayload) {
     const accessToken = await this.jwtService.signAsync(payload);
-    return `JWT ${accessToken}`;
+    return `${accessToken}`;
   }
 
   private async generateRefreshToken(userId: string) {
@@ -25,7 +28,7 @@ export class AuthService {
     const refreshToken = await this.jwtService.signAsync(payload, {
       expiresIn: jwtConstants.refreshTokenExpiresIn,
     });
-    return `JWT ${refreshToken}`;
+    return `${refreshToken}`;
   }
 
   async signIn(email: string, pass: string): Promise<any> {
@@ -40,22 +43,33 @@ export class AuthService {
     }
 
     return {
-      accessToken: await this.generateAccessToken(user.id, user.email),
+      accessToken: await this.generateAccessToken({
+        userId: user.id,
+        email: user.email,
+        role: user.role,
+      }),
       refreshToken: await this.generateRefreshToken(user.id),
     };
   }
 
-  async signUp(createUserDto): Promise<any> {
+  async signUp(signUpData: SignUpDto): Promise<any> {
     const user = await this.usersService.findOne({
-      where: { email: createUserDto.email },
+      where: { email: signUpData.email },
     });
 
     if (user) {
       throw new ConflictException();
     }
 
-    const createdUser = await this.usersService.create(createUserDto);
+    const createdUser = await this.usersService.create({
+      ...signUpData,
+      role: Role.User,
+    });
 
-    return this.generateAccessToken(createdUser.id, createdUser.email);
+    return this.generateAccessToken({
+      userId: createdUser.id,
+      email: createdUser.email,
+      role: createdUser.role,
+    });
   }
 }
