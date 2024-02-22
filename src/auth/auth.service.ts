@@ -66,10 +66,13 @@ export class AuthService {
       role: Role.User,
     });
 
-    return this.generateAccessToken({
-      userId: createdUser.id,
-      email: createdUser.email,
-      role: createdUser.role,
-    });
+    return {
+      accessToken: await this.generateAccessToken({
+        userId: createdUser.id,
+        email: createdUser.email,
+        role: createdUser.role,
+      }),
+      refreshToken: await this.generateRefreshToken(createdUser.id),
+    };
   }
 }
