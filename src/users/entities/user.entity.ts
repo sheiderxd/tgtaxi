@@ -21,6 +21,9 @@ export class User {
   role: Role;
 
   @Column({ type: "varchar", nullable: true })
+  refreshToken: string;
+
+  @Column({ type: "varchar", nullable: true })
   resetPasswordToken: string;
 
   @Column({ type: "varchar" })

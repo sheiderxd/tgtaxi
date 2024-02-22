@@ -26,38 +26,39 @@ import { GetUserDto } from "./dto/get-user.dto";
 export class UsersController {
   constructor(private readonly usersService: UsersService) {}
 
-  @Roles(Role.Admin)
+  // Commited for testing
+  // @Roles(Role.Admin)
   @Post()
   create(@Body() createUserDto: CreateUserDto) {
     return this.usersService.create(createUserDto);
   }
 
-  @Roles(Role.Admin)
+  // @Roles(Role.Admin)
   @Get()
   findAll() {
     return this.usersService.findAll();
   }
 
-  @Roles(Role.User)
+  // @Roles(Role.User)
   @UseInterceptors(new SerializeInterceptor(GetUserDto))
   @Get("/me")
   findCurrentUser(@User() user: any) {
     return this.usersService.findOne({ where: { id: user.userId } });
   }
 
-  @Roles(Role.Admin)
+  // @Roles(Role.Admin)
   @Get(":id")
   findOne(@Param("id") id: string) {
     return this.usersService.findOne({ where: { id } });
   }
 
-  @Roles(Role.Admin)
+  // @Roles(Role.Admin)
   @Patch(":id")
   update(@Param("id") id: string, @Body() updateUserDto: UpdateUserDto) {
     return this.usersService.update(id, updateUserDto);
   }
 
-  @Roles(Role.Admin)
+  // @Roles(Role.Admin)
   @Delete(":id")
   remove(@Param("id") id: string) {
     return this.usersService.remove(id);

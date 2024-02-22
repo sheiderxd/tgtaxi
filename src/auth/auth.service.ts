@@ -1,6 +1,7 @@
 import {
   ConflictException,
   Injectable,
+  NotFoundException,
   UnauthorizedException,
 } from "@nestjs/common";
 import { UsersService } from "src/users/users.service";
@@ -28,6 +29,9 @@ export class AuthService {
     const refreshToken = await this.jwtService.signAsync(payload, {
       expiresIn: jwtConstants.refreshTokenExpiresIn,
     });
+
+    await this.usersService.update(userId, { refreshToken });
+
     return `${refreshToken}`;
   }
 
@@ -41,6 +45,8 @@ export class AuthService {
     if (!user || !user.verifyPassword(pass)) {
       throw new UnauthorizedException();
     }
+
+    const refreshToken = await this.generateRefreshToken(user.id);
 
     return {
       accessToken: await this.generateAccessToken({
@@ -73,6 +79,29 @@ export class AuthService {
         role: createdUser.role,
       }),
       refreshToken: await this.generateRefreshToken(createdUser.id),
+    };
+  }
+
+  async updateRefreshToken(refreshToken: string) {
+    let user;
+
+    if (refreshToken) {
+      user = await this.usersService.findOne({
+        where: { refreshToken },
+      });
+    }
+
+    if (!user) {
+      throw new NotFoundException();
+    }
+
+    return {
+      accessToken: await this.generateAccessToken({
+        userId: user.id,
+        email: user.email,
+        role: user.role,
+      }),
+      refreshToken: await this.generateRefreshToken(user.id),
     };
   }
 }

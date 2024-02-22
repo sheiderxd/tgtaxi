@@ -25,7 +25,7 @@ export class UsersService {
     return this.usersRepository.findOne(params);
   }
 
-  update(id: string, updateUserDto: UpdateUserDto) {
+  update(id: string, updateUserDto: Partial<User>) {
     return this.usersRepository.update({ id }, updateUserDto);
   }
 
