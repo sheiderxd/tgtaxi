@@ -59,6 +59,7 @@ export class UsersController {
 
   // @Roles(Role.Admin)
   @Get(":id")
+  @UseInterceptors(new SerializeInterceptor(GetUserDto))
   findOne(@Param("id") id: string) {
     return this.usersService.findOne({ where: { id } });
   }
