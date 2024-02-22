@@ -10,4 +10,7 @@ export class GetUserDto {
 
   @Expose()
   role: Role;
+
+  @Expose()
+  id: string;
 }

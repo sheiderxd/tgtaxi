@@ -8,6 +8,7 @@ import {
   Delete,
   UseGuards,
   UseInterceptors,
+  ConflictException,
 } from "@nestjs/common";
 import { UsersService } from "./users.service";
 import { CreateUserDto } from "./dto/create-user.dto";
@@ -28,12 +29,22 @@ export class UsersController {
 
   // Commited for testing
   // @Roles(Role.Admin)
+  @UseInterceptors(new SerializeInterceptor(GetUserDto))
   @Post()
-  create(@Body() createUserDto: CreateUserDto) {
+  async create(@Body() createUserDto: CreateUserDto) {
+    const user = await this.usersService.findOne({
+      where: { email: createUserDto.email },
+    });
+
+    if (user) {
+      throw new ConflictException();
+    }
+
     return this.usersService.create(createUserDto);
   }
 
   // @Roles(Role.Admin)
+  @UseInterceptors(new SerializeInterceptor(GetUserDto))
   @Get()
   findAll() {
     return this.usersService.findAll();
